@@ -12,22 +12,41 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    pub fn x(self) -> f32 { self.x }
-    pub fn y(self) -> f32 { self.y }
-    pub fn z(self) -> f32 { self.z }
-    pub fn r(self) -> f32 { self.x }
-    pub fn g(self) -> f32 { self.y }
-    pub fn b(self) -> f32 { self.z }
+    pub fn x(self) -> f32 {
+        self.x
+    }
+    pub fn y(self) -> f32 {
+        self.y
+    }
+    pub fn z(self) -> f32 {
+        self.z
+    }
+    pub fn r(self) -> f32 {
+        self.x
+    }
+    pub fn g(self) -> f32 {
+        self.y
+    }
+    pub fn b(self) -> f32 {
+        self.z
+    }
 
-    pub fn squared_length(self) -> f32 { self.x * self.x + self.y * self.y + self.z * self.z }
-    pub fn length(self) -> f32 { self.squared_length().sqrt() }
-    // pub fn dot(self, v2: Self) -> f32 { self.x * v2.x + self.y * v2.y + self.z * v2.z }
-    // pub fn cross(self, v2: Self) -> Self {
-    //     Vec3::new(
-    //         self.y * v2.z - self.z * v2.y,
-    //         -(self.x * v2.z - self.z * v2.x),
-    //         self.x * v2.y - self.y * v2.x)
-    // }
+    pub fn squared_length(self) -> f32 {
+        self.x * self.x + self.y * self.y + self.z * self.z
+    }
+    pub fn length(self) -> f32 {
+        self.squared_length().sqrt()
+    }
+    pub fn dot(self, v2: Self) -> f32 {
+        self.x * v2.x + self.y * v2.y + self.z * v2.z
+    }
+    pub fn cross(self, v2: Self) -> Self {
+        Vec3::new(
+            self.y * v2.z - self.z * v2.y,
+            -(self.x * v2.z - self.z * v2.x),
+            self.x * v2.y - self.y * v2.x,
+        )
+    }
     pub fn unit_vector(self) -> Self {
         self / self.length()
     }
