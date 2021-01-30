@@ -13,9 +13,22 @@ use std::io::{self, Write};
 use vec3::Vec3;
 use rand;
 
+fn random_in_unit_sphere() -> Vec3 {
+    let mut p: Vec3;
+    loop {
+        p = 2.0 * Vec3::new(rand::random::<f32>(), rand::random::<f32>(), rand::random::<f32>()) - Vec3::new(1.0, 1.0, 1.0);
+        if p.squared_length() < 1.0 {
+            break;
+        }
+    }
+    return p;
+}
+
 fn color(ray: Ray, world: &dyn Hitable) -> Vec3 {
     if let Some(hit) = world.hit(&ray, 0.0, std::f32::MAX) {
-        return (hit.normal + 1.0) * 0.5;
+        // return (hit.normal + 1.0) * 0.5;
+        let target = hit.p + hit.normal + random_in_unit_sphere();
+        return 0.5 * color(Ray::new(hit.p, target - hit.p), world);
     } else {
         let unit_direction = ray.direction().unit_vector();
         let t: f32 = 0.5 * (unit_direction.y() + 1.0);
