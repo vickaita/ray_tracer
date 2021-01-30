@@ -30,13 +30,13 @@ impl Vec3 {
         self.z
     }
     pub fn r(self) -> i32 {
-        (self.x * 255.99) as i32
+        (self.x.sqrt() * 255.99) as i32
     }
     pub fn g(self) -> i32 {
-        (self.y * 255.99) as i32
+        (self.y.sqrt() * 255.99) as i32
     }
     pub fn b(self) -> i32 {
-        (self.z * 255.99) as i32
+        (self.z.sqrt() * 255.99) as i32
     }
 
     pub fn squared_length(self) -> f32 {
