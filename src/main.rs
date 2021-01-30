@@ -16,7 +16,7 @@ use rand;
 fn random_in_unit_sphere() -> Vec3 {
     let mut p: Vec3;
     loop {
-        p = 2.0 * Vec3::new(rand::random::<f32>(), rand::random::<f32>(), rand::random::<f32>()) - Vec3::new(1.0, 1.0, 1.0);
+        p = 2.0 * Vec3::new(rand::random::<f32>(), rand::random::<f32>(), rand::random::<f32>()) - Vec3::ones();
         if p.squared_length() < 1.0 {
             break;
         }
@@ -26,13 +26,12 @@ fn random_in_unit_sphere() -> Vec3 {
 
 fn color(ray: Ray, world: &dyn Hitable) -> Vec3 {
     if let Some(hit) = world.hit(&ray, 0.0, std::f32::MAX) {
-        // return (hit.normal + 1.0) * 0.5;
         let target = hit.p + hit.normal + random_in_unit_sphere();
         return 0.5 * color(Ray::new(hit.p, target - hit.p), world);
     } else {
         let unit_direction = ray.direction().unit_vector();
         let t: f32 = 0.5 * (unit_direction.y() + 1.0);
-        return (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0);
+        return (1.0 - t) * Vec3::ones() + t * Vec3::new(0.5, 0.7, 1.0);
     }
 }
 
@@ -49,7 +48,7 @@ fn main() -> io::Result<()> {
     world.push(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
     for j in (0..ny).rev() {
         for i in 0..nx {
-            let mut col = Vec3::new(0.0, 0.0, 0.0);
+            let mut col = Vec3::zeros();
             for _ in 0..ns {
                 let u = (i as f32 + rand::random::<f32>()) / nx as f32;
                 let v = (j as f32 + rand::random::<f32>()) / ny as f32;
