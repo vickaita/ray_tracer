@@ -25,7 +25,7 @@ fn random_in_unit_sphere() -> Vec3 {
 }
 
 fn color(ray: Ray, world: &dyn Hitable) -> Vec3 {
-    if let Some(hit) = world.hit(&ray, 0.0, std::f32::MAX) {
+    if let Some(hit) = world.hit(&ray, 0.001, std::f32::MAX) {
         let target = hit.p + hit.normal + random_in_unit_sphere();
         return 0.5 * color(Ray::new(hit.p, target - hit.p), world);
     } else {
@@ -36,8 +36,8 @@ fn color(ray: Ray, world: &dyn Hitable) -> Vec3 {
 }
 
 fn main() -> io::Result<()> {
-    let nx = 800;
-    let ny = 400;
+    let nx = 400;
+    let ny = 200;
     let ns = 100;
 
     io::stdout().write_all(format!("P3\n{} {}\n255\n", nx, ny).as_bytes())?;
