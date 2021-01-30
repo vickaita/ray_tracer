@@ -21,14 +21,14 @@ impl Vec3 {
     pub fn z(self) -> f32 {
         self.z
     }
-    pub fn r(self) -> f32 {
-        self.x
+    pub fn r(self) -> i32 {
+        (self.x * 255.99) as i32
     }
-    pub fn g(self) -> f32 {
-        self.y
+    pub fn g(self) -> i32 {
+        (self.y * 255.99) as i32
     }
-    pub fn b(self) -> f32 {
-        self.z
+    pub fn b(self) -> i32 {
+        (self.z * 255.99) as i32
     }
 
     pub fn squared_length(self) -> f32 {
@@ -64,6 +64,30 @@ impl Add for Vec3 {
     }
 }
 
+impl Add<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, other: f32) -> Self {
+        Self {
+            x: self.x + other,
+            y: self.y + other,
+            z: self.z + other,
+        }
+    }
+}
+
+impl Add<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn add(self, v: Vec3) -> Vec3 {
+        Vec3 {
+            x: v.x + self,
+            y: v.y + self,
+            z: v.z + self,
+        }
+    }
+}
+
 impl Sub for Vec3 {
     type Output = Vec3;
 
@@ -72,6 +96,30 @@ impl Sub for Vec3 {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
+        }
+    }
+}
+
+impl Sub<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, other: f32) -> Self {
+        Self {
+            x: self.x - other,
+            y: self.y - other,
+            z: self.z - other,
+        }
+    }
+}
+
+impl Sub<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn sub(self, v: Vec3) -> Vec3 {
+        Vec3 {
+            x: v.x - self,
+            y: v.y - self,
+            z: v.z - self,
         }
     }
 }

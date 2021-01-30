@@ -1,32 +1,22 @@
+mod hitable;
+mod hitable_list;
 mod ray;
+mod sphere;
 mod vec3;
 
+use hitable::Hitable;
 use ray::Ray;
+use sphere::Sphere;
 use std::io::{self, Write};
 use vec3::Vec3;
 
-fn hit_sphere(center: Vec3, radius: f32, ray: Ray) -> f32 {
-    let oc = ray.origin() - center;
-    let a = ray.direction().dot(ray.direction());
-    let b = 2.0 * oc.dot(ray.direction());
-    let c = oc.dot(oc) - radius * radius;
-    let discriminant = b * b - 4.0 * a * c;
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (-b -discriminant.sqrt()) / (2.0 * a)
-    }
-}
-
-fn color(ray: Ray) -> Vec3 {
-    let t = hit_sphere(Vec3::new(0.0, 0.0, -1.0), 0.5, ray);
-    if t > 0.0 {
-        let n = (ray.point_at_parameter(t) - Vec3::new(0.0, 0.0, -1.0)).unit_vector();
-        0.5 * Vec3::new(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0)
+fn color(ray: Ray, world: &dyn Hitable) -> Vec3 {
+    if let Some(hit) = world.hit(&ray, 0.0, std::f32::MAX) {
+        return (hit.normal + 1.0) * 0.5
     } else {
         let unit_direction = ray.direction().unit_vector();
-        let t: f32 = 0.5 * unit_direction.y() + 1.0;
-        (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
+        let t: f32 = 0.5 * (unit_direction.y() + 1.0);
+        return (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0);
     }
 }
 
@@ -39,13 +29,16 @@ fn main() -> io::Result<()> {
     let horizontal = Vec3::new(4.0, 0.0, 0.0);
     let vertical = Vec3::new(0.0, 2.0, 0.0);
     let origin = Vec3::new(0.0, 0.0, 0.0);
-
+    let mut world: Vec<Box<dyn Hitable>> = Vec::new();
+    world.push(Box::new(Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5)));
+    world.push(Box::new(Sphere::new(Vec3::new(0.0, -100.5, -1.0), 100.0)));
+    // let world = Sphere::new(Vec3::new(0.0, 0.0, -1.0), 0.5);
     for j in (0..ny).rev() {
         for i in 0..nx {
             let u = i as f32 / nx as f32;
             let v = j as f32 / ny as f32;
             let r = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical);
-            let col = color(r) * 255.99;
+            let col = color(r, &world);
             io::stdout().write_all(
                 format!("{} {} {}\n", col.r() as i32, col.g() as i32, col.b() as i32).as_bytes(),
             )?;
