@@ -1,15 +1,22 @@
+use super::material::Material;
 use super::ray::Ray;
 use super::vec3::Vec3;
 
-pub struct HitRecord {
+pub struct HitRecord<'a> {
     pub t: f32,
     pub p: Vec3,
     pub normal: Vec3,
+    pub material: &'a Box<dyn Material>,
 }
 
-impl HitRecord {
-    pub fn new(t: f32, p: Vec3, normal: Vec3) -> HitRecord {
-        HitRecord { t, p, normal }
+impl<'a> HitRecord<'a> {
+    pub fn new(t: f32, p: Vec3, normal: Vec3, material: &'a Box<dyn Material>) -> HitRecord {
+        HitRecord {
+            t,
+            p,
+            normal,
+            material,
+        }
     }
 }
 

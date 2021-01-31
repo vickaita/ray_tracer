@@ -1,15 +1,21 @@
 use super::hitable::{HitRecord, Hitable};
+use super::material::Material;
 use super::ray::Ray;
 use super::vec3::Vec3;
 
 pub struct Sphere {
     center: Vec3,
     radius: f32,
+    pub material: Box<dyn Material>,
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f32) -> Sphere {
-        Sphere { center, radius }
+    pub fn new(center: Vec3, radius: f32, material: Box<dyn Material>) -> Sphere {
+        Sphere {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -24,12 +30,22 @@ impl Hitable for Sphere {
             let mut tmp = (-b - discriminant.sqrt()) / a;
             if tmp < t_max && tmp > t_min {
                 let p = ray.point_at_parameter(tmp);
-                return Some(HitRecord::new(tmp, p, (p - self.center) / self.radius));
+                return Some(HitRecord::new(
+                    tmp,
+                    p,
+                    (p - self.center) / self.radius,
+                    &self.material,
+                ));
             }
             tmp = (-b + discriminant.sqrt()) / a;
             if tmp < t_max && tmp > t_min {
                 let p = ray.point_at_parameter(tmp);
-                return Some(HitRecord::new(tmp, p, (p - self.center) / self.radius));
+                return Some(HitRecord::new(
+                    tmp,
+                    p,
+                    (p - self.center) / self.radius,
+                    &self.material,
+                ));
             }
         }
         return None;
