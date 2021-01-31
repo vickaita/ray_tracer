@@ -8,7 +8,7 @@ mod vec3;
 
 use camera::Camera;
 use hitable::Hitable;
-use material::Lambertian;
+use material::{Lambertian, Metal};
 use rand;
 use ray::Ray;
 use sphere::Sphere;
@@ -53,12 +53,12 @@ fn main() -> io::Result<()> {
     world.push(Box::new(Sphere::new(
         Vec3::new(1.0, 0.0, -1.0),
         0.5,
-        Box::new(Lambertian::new(Vec3::new(0.8, 0.6, 0.2))),
+        Box::new(Metal::new(Vec3::new(0.8, 0.6, 0.2))),
     )));
     world.push(Box::new(Sphere::new(
         Vec3::new(-1.0, 0.0, -1.0),
         0.5,
-        Box::new(Lambertian::new(Vec3::new(0.8, 0.8, 0.8))),
+        Box::new(Metal::new(Vec3::new(0.8, 0.8, 0.8))),
     )));
 
     for j in (0..ny).rev() {
