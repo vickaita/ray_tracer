@@ -70,6 +70,11 @@ impl Dielectric {
     pub fn new(refraction_index: f32) -> Dielectric {
         Dielectric { refraction_index }
     }
+
+    fn schlick(&self, cosine: f32) -> f32 {
+        let r0 = ((1.0 - self.refraction_index) / (1.0 + self.refraction_index)).powf(2.0);
+        r0 + (1.0 - r0) * (1.0 - cosine).powf(5.0)
+    }
 }
 
 impl Material for Dielectric {
@@ -78,14 +83,22 @@ impl Material for Dielectric {
         let attenuation = Vec3::ones();
         let outward_normal;
         let ni_over_nt;
+        let reflect_prob;
+        let cosine;
         if ray.direction().dot(hit.normal) > 0.0 {
             outward_normal = -1.0 * hit.normal;
             ni_over_nt = self.refraction_index;
+            cosine = self.refraction_index * ray.direction().dot(hit.normal) / ray.direction().length();
         } else {
             outward_normal = hit.normal;
             ni_over_nt = 1.0 / self.refraction_index;
+            cosine = -1.0 * ray.direction().dot(hit.normal) / ray.direction().length();
         }
         if let Some(refracted) = ray.direction().refract(outward_normal, ni_over_nt) {
+            reflect_prob = self.schlick(cosine);
+            if rand::random::<f32>() < reflect_prob {
+                return Some((attenuation, Ray::new(hit.p, reflected)));
+            }
             return Some((attenuation, Ray::new(hit.p, refracted)));
         } else {
             return Some((attenuation, Ray::new(hit.p, reflected)));
