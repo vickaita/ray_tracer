@@ -66,6 +66,10 @@ impl Vec3 {
     pub fn unit_vector(self) -> Self {
         self / self.length()
     }
+
+    pub fn reflect(self: Vec3, n: Vec3) -> Vec3 {
+        self - 2.0 * self.dot(n) * n
+    }
 }
 
 impl Add for Vec3 {
@@ -209,7 +213,7 @@ mod tests {
         assert_eq!(
             Vec3::new(1.0, 2.0, -3.0) + Vec3::new(1.0, 0.0, 2.0),
             Vec3::new(2.0, 2.0, -1.0)
-        )
+            )
     }
 
     #[test]
