@@ -41,12 +41,15 @@ impl Material for Lambertian {
 
 pub struct Metal {
     albedo: Vec3,
-    fuzz: f32
+    fuzz: f32,
 }
 
 impl Metal {
     pub fn new(albedo: Vec3, fuzz: f32) -> Metal {
-        Metal { albedo, fuzz: fuzz.min(1.0) }
+        Metal {
+            albedo,
+            fuzz: fuzz.min(1.0),
+        }
     }
 }
 
@@ -88,7 +91,8 @@ impl Material for Dielectric {
         if ray.direction().dot(hit.normal) > 0.0 {
             outward_normal = -1.0 * hit.normal;
             ni_over_nt = self.refraction_index;
-            cosine = self.refraction_index * ray.direction().dot(hit.normal) / ray.direction().length();
+            cosine =
+                self.refraction_index * ray.direction().dot(hit.normal) / ray.direction().length();
         } else {
             outward_normal = hit.normal;
             ni_over_nt = 1.0 / self.refraction_index;
