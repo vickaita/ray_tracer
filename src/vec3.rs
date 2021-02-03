@@ -80,6 +80,34 @@ impl Vec3 {
         }
         return None;
     }
+
+    pub fn random_in_unit_sphere() -> Vec3 {
+        let mut p: Vec3;
+        loop {
+            p =
+                2.0 * Vec3::new(
+                    rand::random::<f32>(),
+                    rand::random::<f32>(),
+                    rand::random::<f32>(),
+                ) - Vec3::ones();
+            if p.squared_length() < 1.0 {
+                break;
+            }
+        }
+        return p;
+    }
+
+    pub fn random_in_unit_disc() -> Vec3 {
+        let mut p: Vec3;
+        loop {
+            p = 2.0 * Vec3::new(rand::random::<f32>(), rand::random::<f32>(), 0.0)
+                - Vec3::new(1.0, 1.0, 0.0);
+            if p.dot(p) < 1.0 {
+                break;
+            }
+        }
+        return p;
+    }
 }
 
 impl Add for Vec3 {
