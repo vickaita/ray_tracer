@@ -30,6 +30,51 @@ fn color(ray: Ray, world: &dyn Hitable, depth: i32) -> Vec3 {
     }
 }
 
+fn random_scene() -> Vec<Box<dyn Hitable>> {
+    let mut list: Vec<Box<dyn Hitable>> = Vec::new();
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = rand::random::<f32>();
+            let center = Vec3::new(
+                a as f32 + 0.9 * rand::random::<f32>(),
+                0.2,
+                b as f32 + 0.9 * rand::random::<f32>(),
+            );
+            if choose_mat < 0.8 {
+                list.push(Box::new(Sphere::new(
+                    center,
+                    0.2,
+                    Box::new(Lambertian::new(Vec3::new(
+                        rand::random::<f32>() * rand::random::<f32>(),
+                        rand::random::<f32>() * rand::random::<f32>(),
+                        rand::random::<f32>() * rand::random::<f32>(),
+                    ))),
+                )));
+            } else if choose_mat < 0.95 {
+                list.push(Box::new(Sphere::new(
+                    center,
+                    0.2,
+                    Box::new(Metal::new(
+                        Vec3::new(
+                            0.5 * (1.0 + rand::random::<f32>()),
+                            0.5 * (1.0 + rand::random::<f32>()),
+                            0.5 * (1.0 + rand::random::<f32>()),
+                        ),
+                        0.5 * rand::random::<f32>(),
+                    )),
+                )));
+            } else {
+                list.push(Box::new(Sphere::new(
+                    center,
+                    0.2,
+                    Box::new(Dielectric::new(1.5)),
+                )));
+            }
+        }
+    }
+    return list;
+}
+
 fn main() -> io::Result<()> {
     let nx = 400;
     let ny = 200;
@@ -77,6 +122,8 @@ fn main() -> io::Result<()> {
         Box::new(Dielectric::new(1.5)),
     )));
 
+    let world2 = random_scene();
+
     for j in (0..ny).rev() {
         for i in 0..nx {
             let mut col = Vec3::zeros();
@@ -84,7 +131,7 @@ fn main() -> io::Result<()> {
                 let u = (i as f32 + rand::random::<f32>()) / nx as f32;
                 let v = (j as f32 + rand::random::<f32>()) / ny as f32;
                 let r = cam.get_ray(u, v);
-                col = col + color(r, &world, 0);
+                col = col + color(r, &world2, 0);
             }
             col = col / ns as f32;
             io::stdout().write_all(
