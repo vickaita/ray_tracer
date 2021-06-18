@@ -1,0 +1,4 @@
+A simple ray tracer written in Rust based on a tutorial for writing a ray
+tracer in C++.
+
+I wrote this to get some familiarity with Rust.
